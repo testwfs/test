@@ -17,8 +17,14 @@ jobs:
       - name: REST API with curl
         run: |
           curl -X GET "https://nexus.ttt-sp.com/repository/releases/com/webfleet/account-api/8.0.0/account-api-8.0.0.pom"
-      - name: chuck-norris-quote-action
+      - name: chuck-norris-quote-action-html
+        id: htmlchuck
         uses: glav/chuck-norris-quote@v1.0
+        with:
+          quote-format: 'html'
+          escape-quote: 'true'
+      - name: ShowHtmlOutput
+        run: echo "${{ steps.htmlchuck.outputs.quote }}"
 
   integration-test:
     needs: build
