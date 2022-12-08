@@ -16,7 +16,7 @@ jobs:
         run: ./gradlew build
       - name: REST API with curl
         run: |
-          curl -X GET "curl -X GET "https://nexus.ttt-sp.com/repository/releases/com/webfleet/account-api/8.0.0/account-api-8.0.0.pom""
+          curl -X GET "https://nexus.ttt-sp.com/repository/releases/com/webfleet/account-api/8.0.0/account-api-8.0.0.pom""
 
   integration-test:
     needs: build
