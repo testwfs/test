@@ -34,10 +34,11 @@ jobs:
     needs: integration-test
     runs-on: ubuntu-latest
     steps:
+    - name: Set current date as env variable
+      run: echo "BUILDDATE::$(date +'%Y%m%dT%H%M%S')" >> $GITHUB_ENV
     - name: Check out code
       uses: actions/checkout@v2
     - name: Create feature branch
-      run: git checkout -b feature/${{ steps.date.outputs.date }}
+      run: git checkout -b feature/${{ env.BUILDDATE }}
     - name: Push new branch
-      run: git push origin feature/${{ steps.date.outputs.date }}
-    
+      run: git push origin feature/${{ env.BUILDDATE }}
