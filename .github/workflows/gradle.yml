@@ -14,9 +14,6 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build with Gradle
         run: ./gradlew build
-      - name: REST API with curl
-        run: |
-          curl -X GET "https://nexus.ttt-sp.com/repository/releases/com/webfleet/account-api/8.0.0/account-api-8.0.0.pom"
 
 
   integration-test:
@@ -33,3 +30,35 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build with Gradle
         run: ./gradlew build
+  createfeature:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Create feature branch
+      run: git checkout -b feature/${{ steps.date.outputs.date }}
+    - name: Update Changelog
+      uses: thomaseizinger/keep-a-changelog-new-feature@v1
+      with:
+        version: ${{ steps.date.outputs.date }}
+    - name: Commit changelog and manifest files
+      id: make-commit
+      run: |
+        git add app_versions.gradle
+        git add CHANGELOG.md
+        git commit --message "Prepare feature ${{ steps.date.outputs.date }}"
+        echo "::set-output name=commit::$(git rev-parse HEAD)"
+    - name: Push new branch
+      run: git push origin feature/${{ steps.date.outputs.date }}
+    - name: Create pull request into main
+      uses: thomaseizinger/create-pull-request@1.0.0
+      with:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       head: feature/${{ steps.date.outputs.date }}
+       base: main
+       title: ${{ steps.date.outputs.date }} into main
+       reviewers: ${{ github.event.issue.user.login }}
+       body: |
+           Hi!
+           This PR was created in response workflow running.
+           I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
